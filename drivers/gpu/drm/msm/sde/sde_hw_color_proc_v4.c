@@ -1,4 +1,5 @@
 /* Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2018, Pal Zoltan Illes (tbalden) - kcal rgb
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -208,11 +209,20 @@ void sde_setup_dspp_pccv4(struct sde_hw_dspp *ctx, void *cfg)
 	struct drm_msm_pcc_coeff *coeffs = NULL;
 	int i = 0;
 	u32 base = 0;
+	bool enable = false;
+	int r = 255, g = 255, b = 255, min = 20;
 
 	if (!ctx || !cfg) {
 		DRM_ERROR("invalid param ctx %pK cfg %pK\n", ctx, cfg);
 		return;
 	}
+
+	if (r < min)
+		r = min;
+	if (g < min)
+		g = min;
+	if (b < min)
+		b = min;
 
 	if (!hw_cfg->payload) {
 		DRM_DEBUG_DRIVER("disable pcc feature\n");
@@ -264,9 +274,22 @@ void sde_setup_dspp_pccv4(struct sde_hw_dspp *ctx, void *cfg)
 		}
 
 		SDE_REG_WRITE(&ctx->hw, base + PCC_C_OFF, coeffs->c);
-		SDE_REG_WRITE(&ctx->hw, base + PCC_R_OFF, coeffs->r);
-		SDE_REG_WRITE(&ctx->hw, base + PCC_G_OFF, coeffs->g);
-		SDE_REG_WRITE(&ctx->hw, base + PCC_B_OFF, coeffs->b);
+
+		if (enable && !i)
+			SDE_REG_WRITE(&ctx->hw, base + PCC_R_OFF, (coeffs->r * r) / 256);
+		else
+			SDE_REG_WRITE(&ctx->hw, base + PCC_R_OFF, coeffs->r);
+
+		if (enable && i == 1)
+			SDE_REG_WRITE(&ctx->hw, base + PCC_G_OFF, (coeffs->g * g) / 256);
+		else
+			SDE_REG_WRITE(&ctx->hw, base + PCC_G_OFF, coeffs->g);
+
+		if (enable && i == 2)
+			SDE_REG_WRITE(&ctx->hw, base + PCC_B_OFF, (coeffs->b * b) / 256);
+		else
+			SDE_REG_WRITE(&ctx->hw, base + PCC_B_OFF, coeffs->b);
+
 		SDE_REG_WRITE(&ctx->hw, base + PCC_RG_OFF, coeffs->rg);
 		SDE_REG_WRITE(&ctx->hw, base + PCC_RB_OFF, coeffs->rb);
 		SDE_REG_WRITE(&ctx->hw, base + PCC_GB_OFF, coeffs->gb);
