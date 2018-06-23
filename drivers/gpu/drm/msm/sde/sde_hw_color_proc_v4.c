@@ -18,10 +18,18 @@
 unsigned int kcal_red = 256;
 unsigned int kcal_green = 256;
 unsigned int kcal_blue = 256;
+unsigned int kcal_hue = 0;
+unsigned int kcal_sat = 255;
+unsigned int kcal_val = 255;
+unsigned int kcal_cont = 255;
 
 module_param(kcal_red, uint, 0644);
 module_param(kcal_green, uint, 0644);
 module_param(kcal_blue, uint, 0644);
+module_param(kcal_hue, uint, 0644);
+module_param(kcal_sat, uint, 0644);
+module_param(kcal_val, uint, 0644);
+module_param(kcal_cont, uint, 0644);
 
 static int sde_write_3d_gamut(struct sde_hw_blk_reg_map *hw,
 		struct drm_msm_3d_gamut *payload, u32 base,
@@ -219,6 +227,7 @@ void sde_setup_dspp_pccv4(struct sde_hw_dspp *ctx, void *cfg)
 	int i = 0;
 	int kcal_min = 20;
 	u32 base = 0;
+	u32 opcode = 0, local_opcode = 0;
 
 	if (!ctx || !cfg) {
 		DRM_ERROR("invalid param ctx %pK cfg %pK\n", ctx, cfg);
@@ -293,6 +302,27 @@ void sde_setup_dspp_pccv4(struct sde_hw_dspp *ctx, void *cfg)
 		SDE_REG_WRITE(&ctx->hw, base + PCC_GB_OFF, coeffs->gb);
 		SDE_REG_WRITE(&ctx->hw, base + PCC_RGB_OFF, coeffs->rgb);
 	}
+
+	opcode = SDE_REG_READ(&ctx->hw, ctx->cap->sblk->hsic.base);
+
+	SDE_REG_WRITE(&ctx->hw, ctx->cap->sblk->hsic.base + PA_HUE_OFF,
+		kcal_hue & PA_HUE_MASK);
+	local_opcode |= PA_HUE_EN;
+
+	SDE_REG_WRITE(&ctx->hw, ctx->cap->sblk->hsic.base + PA_SAT_OFF,
+		kcal_sat & PA_SAT_MASK);
+	local_opcode |= PA_SAT_EN;
+
+	SDE_REG_WRITE(&ctx->hw, ctx->cap->sblk->hsic.base + PA_VAL_OFF,
+		kcal_val & PA_VAL_MASK);
+	local_opcode |= PA_VAL_EN;
+
+	SDE_REG_WRITE(&ctx->hw, ctx->cap->sblk->hsic.base + PA_CONT_OFF,
+		kcal_cont & PA_CONT_MASK);
+	local_opcode |= PA_CONT_EN;
+
+	opcode |= (local_opcode | PA_EN);
+	SDE_REG_WRITE(&ctx->hw, ctx->cap->sblk->hsic.base, opcode);
 
 	SDE_REG_WRITE(&ctx->hw, ctx->cap->sblk->pcc.base, PCC_EN);
 }
