@@ -15,7 +15,6 @@
 
 static const struct adreno_gpu_core adreno_gpulist[] = {
 	{
-	{
 		.gpurev = ADRENO_REV_A630,
 		.core = 6,
 		.major = 3,
