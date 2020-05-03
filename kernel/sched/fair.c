@@ -13066,6 +13066,7 @@ void check_for_migration(struct rq *rq, struct task_struct *p)
 {
 	int active_balance, ret;
 	int new_cpu = -1;
+	int cpu = smp_processor_id();
 	int prev_cpu = task_cpu(p);
 	struct sched_domain *sd = NULL;
 
