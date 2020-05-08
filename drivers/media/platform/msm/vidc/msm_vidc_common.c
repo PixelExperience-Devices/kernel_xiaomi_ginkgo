@@ -4206,13 +4206,15 @@ static void populate_frame_data(struct vidc_frame_data *data,
 	int extra_idx;
 	struct vb2_buffer *vb;
 	struct vb2_v4l2_buffer *vbuf;
-	struct vidc_tag_data tag_data = { 0 };
+	struct vidc_tag_data tag_data;
 
 	if (!inst || !mbuf || !data) {
 		dprintk(VIDC_ERR, "%s: invalid params %pK %pK %pK\n",
 			__func__, inst, mbuf, data);
 		return;
 	}
+
+	memset(&tag_data, 0, sizeof(struct vidc_tag_data));
 
 	vb = &mbuf->vvb.vb2_buf;
 	vbuf = to_vb2_v4l2_buffer(vb);
