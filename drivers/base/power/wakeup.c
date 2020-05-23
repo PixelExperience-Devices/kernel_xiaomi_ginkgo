@@ -539,6 +539,9 @@ static void wakeup_source_activate(struct wakeup_source *ws)
 			"unregistered wakeup source\n"))
 		return;
 
+	if (!strcmp(ws->name, "4e00000.ssusb"))
+		return;
+
 	ws->active = true;
 	ws->active_count++;
 	ws->last_time = ktime_get();
