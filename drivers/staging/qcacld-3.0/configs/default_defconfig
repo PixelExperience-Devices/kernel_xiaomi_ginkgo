@@ -330,10 +330,10 @@ endif
 # Feature flags which are not (currently) configurable via Kconfig
 
 #Whether to build debug version
-BUILD_DEBUG_VERSION := n
+BUILD_DEBUG_VERSION := y
 
 #Enable this flag to build driver in diag version
-BUILD_DIAG_VERSION := n
+BUILD_DIAG_VERSION := y
 
 # Debug specific features
 CONFIG_FEATURE_TSO_DEBUG := n
@@ -363,7 +363,7 @@ CONFIG_WLAN_LOG_INFO := n
 CONFIG_ATH_PERF_PWR_OFFLOAD := y
 
 #Disable packet log
-CONFIG_REMOVE_PKT_LOG := y
+CONFIG_REMOVE_PKT_LOG := n
 
 #Enable 11AC TX
 ifeq ($(CONFIG_ROME_IF),pci)
@@ -634,7 +634,9 @@ ifeq ($(CONFIG_ARCH_MSM8996), y)
 CONFIG_CHANNEL_HOPPING_ALL_BANDS := y
 endif
 
-CONFIG_WLAN_LOGGING_SOCK_SVC := n
+ifneq ($(CONFIG_HIF_USB), y)
+CONFIG_WLAN_LOGGING_SOCK_SVC := y
+endif
 CONFIG_FEATURE_BECN_STATS := n
 
 #enable MPTA helper for QCS405
