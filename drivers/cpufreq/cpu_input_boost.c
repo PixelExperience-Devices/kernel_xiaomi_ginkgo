@@ -46,10 +46,8 @@ static unsigned int get_max_boost_freq(struct cpufreq_policy *policy)
 
 	if (cpumask_test_cpu(policy->cpu, cpu_lp_mask))
 		freq = CONFIG_MAX_BOOST_FREQ_LP;
-	else if (cpumask_test_cpu(policy->cpu, cpu_perf_mask))
-		freq = CONFIG_MAX_BOOST_FREQ_PERF;
 	else
-		freq = CONFIG_MAX_BOOST_FREQ_PERFP;
+		freq = CONFIG_MAX_BOOST_FREQ_PERF;
 
 	return min(freq, policy->max);
 }
@@ -60,10 +58,8 @@ static unsigned int get_min_freq(struct cpufreq_policy *policy)
 
 	if (cpumask_test_cpu(policy->cpu, cpu_lp_mask))
 		freq = CONFIG_CPU_FREQ_DEFAULT_LITTLE_MIN;
-	else if (cpumask_test_cpu(policy->cpu, cpu_perf_mask))
-		freq = CONFIG_CPU_FREQ_DEFAULT_BIG_MIN;
 	else
-		freq = CONFIG_CPU_FREQ_DEFAULT_PRIME_MIN;
+		freq = CONFIG_CPU_FREQ_DEFAULT_BIG_MIN;
 
 	return max(freq, policy->cpuinfo.min_freq);
 }
@@ -77,8 +73,6 @@ static void update_online_cpu_policy(void)
 	cpu = cpumask_first_and(cpu_lp_mask, cpu_online_mask);
 	cpufreq_update_policy(cpu);
 	cpu = cpumask_first_and(cpu_perf_mask, cpu_online_mask);
-	cpufreq_update_policy(cpu);
-	cpu = cpumask_first_and(cpu_perfp_mask, cpu_online_mask);
 	cpufreq_update_policy(cpu);
 	put_online_cpus();
 }
