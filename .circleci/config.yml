@@ -9,7 +9,7 @@ jobs:
            git config --global user.name "Murilo Pereira"
            git config --global user.email "mrex@tuta.io"
            git config --global color.ui false
-           git clone --depth=1 https://github.com/murilopereirame/kernel_xiaomi_ginkgo -b initial .
+           git clone --depth=1 https://github.com/murilopereirame/kernel_xiaomi_ginkgo .
            bash .circleci/build.sh
 workflows:
   version: 2.1
