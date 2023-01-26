@@ -1,0 +1,18 @@
+version: 2.1
+jobs:
+  compile:
+   docker:
+      - image: z4nyx/docker:latest
+   steps:
+      - run:
+          command: |
+           git config --global user.name "Murilo Pereira"
+           git config --global user.email "mrex@tuta.io"
+           git config --global color.ui false
+           git clone --depth=1 https://github.com/murilopereirame/kernel_xiaomi_ginkgo -b initial .
+           bash .circleci/build.sh
+workflows:
+  version: 2.1
+  cooking:
+    jobs:
+      - compile
